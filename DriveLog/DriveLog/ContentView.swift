@@ -3,6 +3,7 @@ import MapKit
 
 struct ContentView: View {
     @StateObject var locationManager = LocationManager()
+    @State var isSettingsSheetPresented = false
     
     var body: some View {
         ZStack {
@@ -33,7 +34,7 @@ struct ContentView: View {
                         .frame(width:20, height: 0)
                     
                     Button(action: {
-                        // Do something
+                        isSettingsSheetPresented.toggle()
                     }) {
                         Image(systemName: "gear")
                             .resizable()
@@ -46,6 +47,20 @@ struct ContentView: View {
                     }
                     .padding(.bottom, 20)
                     .shadow(radius: 3)
+                    .sheet(isPresented: $isSettingsSheetPresented){
+                        NavigationView {
+                            SettingsView()
+                                .navigationBarTitle("Settings", displayMode: .inline)
+                            
+                                .navigationBarItems(
+                                    leading: Button("Exit") {
+                                        isSettingsSheetPresented.toggle()
+                                    }
+                                )
+                        }
+                        
+                    }
+                    
                     
                     Spacer()
                     
@@ -65,7 +80,7 @@ struct ContentView: View {
                     Spacer()
                     Spacer()
                 }
-
+                
             }
         }
         .edgesIgnoringSafeArea(.all)
@@ -75,21 +90,26 @@ struct ContentView: View {
 
 struct MapView: UIViewRepresentable {
     let mapView = MKMapView()
-
+    
     func makeUIView(context: Context) -> MKMapView {
         mapView.showsUserLocation = true
         mapView.delegate = context.coordinator
         return mapView
     }
-
+    
     func updateUIView(_ uiView: MKMapView, context: Context) {
-        // Update the map view
+        if let userLocation = uiView.userLocation.location {
+                uiView.centerCoordinate = userLocation.coordinate
+                let coordinateRegion = MKCoordinateRegion(center: uiView.centerCoordinate, latitudinalMeters: 500, longitudinalMeters: 500)
+                uiView.showsCompass = true
+                uiView.setRegion(coordinateRegion, animated: true)
+            }
     }
-
+    
     func makeCoordinator() -> Coordinator {
         return Coordinator()
     }
-
+    
     class Coordinator: NSObject, MKMapViewDelegate {
         func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
             mapView.centerCoordinate = userLocation.coordinate
@@ -103,9 +123,9 @@ struct MapView: UIViewRepresentable {
 
 class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     let locationManager = CLLocationManager()
-
+    
     @Published var authorizationStatus: CLAuthorizationStatus = .notDetermined
-
+    
     var authorizationStatusString: String {
         switch authorizationStatus {
         case .authorizedWhenInUse:
@@ -122,18 +142,18 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
             fatalError("Unexpected case in authorizationStatus")
         }
     }
-
+    
     override init() {
         super.init()
-
+        
         locationManager.delegate = self
         authorizationStatus = CLLocationManager.authorizationStatus()
     }
-
+    
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         authorizationStatus = CLLocationManager.authorizationStatus()
     }
-
+    
     func requestAuthorization() {
         locationManager.requestWhenInUseAuthorization()
     }

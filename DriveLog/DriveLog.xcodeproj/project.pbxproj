@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C3AB37CC2B0BE12800F1E34C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3AB37CB2B0BE12800F1E34C /* SettingsView.swift */; };
 		C3AED1672B0408820097A428 /* DriveLogApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3AED1662B0408820097A428 /* DriveLogApp.swift */; };
 		C3AED1692B0408820097A428 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3AED1682B0408820097A428 /* ContentView.swift */; };
 		C3AED16B2B04088A0097A428 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C3AED16A2B04088A0097A428 /* Assets.xcassets */; };
@@ -14,6 +15,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C3AB37CB2B0BE12800F1E34C /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C3AED1632B0408820097A428 /* DriveLog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DriveLog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3AED1662B0408820097A428 /* DriveLogApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriveLogApp.swift; sourceTree = "<group>"; };
 		C3AED1682B0408820097A428 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -54,6 +56,7 @@
 			children = (
 				C3AED1662B0408820097A428 /* DriveLogApp.swift */,
 				C3AED1682B0408820097A428 /* ContentView.swift */,
+				C3AB37CB2B0BE12800F1E34C /* SettingsView.swift */,
 				C3AED16A2B04088A0097A428 /* Assets.xcassets */,
 				C3AED16F2B04088A0097A428 /* Info.plist */,
 				C3AED16C2B04088A0097A428 /* Preview Content */,
@@ -138,6 +141,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C3AB37CC2B0BE12800F1E34C /* SettingsView.swift in Sources */,
 				C3AED1692B0408820097A428 /* ContentView.swift in Sources */,
 				C3AED1672B0408820097A428 /* DriveLogApp.swift in Sources */,
 			);
