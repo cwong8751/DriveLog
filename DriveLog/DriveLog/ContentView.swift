@@ -4,6 +4,8 @@ import MapKit
 struct ContentView: View {
     @StateObject var locationManager = LocationManager()
     @State var isSettingsSheetPresented = false
+    @State var isLogging = false
+    
     
     var body: some View {
         ZStack {
@@ -11,6 +13,7 @@ struct ContentView: View {
                 .edgesIgnoringSafeArea(.all)
                 .onAppear {
                     locationManager.requestAuthorization()
+                    
                 }
             
             VStack{
@@ -21,7 +24,8 @@ struct ContentView: View {
                         .foregroundColor(.white)
                     Spacer()
                 }
-                .frame(width: .infinity, height: 80)
+                .padding(.top, 40)
+                .frame(maxWidth: .infinity)
                 .background(
                     LinearGradient(gradient: Gradient(colors: [Color.black.opacity(0.3), Color.clear]), startPoint: .top, endPoint: .bottom)
                 )
@@ -29,10 +33,11 @@ struct ContentView: View {
                 Spacer()
                 
                 HStack {
-                    // Fixed with spacer
-                    Color.clear
-                        .frame(width:20, height: 0)
                     
+                    Spacer()
+                        .frame(width: 20)
+                    
+                    // settings button
                     Button(action: {
                         isSettingsSheetPresented.toggle()
                     }) {
@@ -41,7 +46,7 @@ struct ContentView: View {
                             .scaledToFit()
                             .frame(width: 40, height: 40)
                             .foregroundColor(.white)
-                            .padding(5)
+                            .padding(3)
                             .background(Color.blue)
                             .clipShape(Circle())
                     }
@@ -61,17 +66,17 @@ struct ContentView: View {
                         
                     }
                     
-                    
                     Spacer()
                     
+                    // the "go" action button
                     Button(action: {
-                        // Do something
+                        isLogging.toggle() // switch statuses
                     }) {
-                        Text("GO")
-                            .font(.largeTitle)
+                        Text(isLogging ? "PAUSE" : "GO")
+                            .font(isLogging ? .title : .largeTitle)
                             .foregroundColor(.white)
                             .frame(width: 100, height: 100)
-                            .background(Color.green)
+                            .background(isLogging ? Color.orange : Color.green)
                             .clipShape(Circle())
                     }
                     .padding(.bottom, 20)
@@ -90,20 +95,24 @@ struct ContentView: View {
 
 struct MapView: UIViewRepresentable {
     let mapView = MKMapView()
+    @State var shouldRecenter = true
     
     func makeUIView(context: Context) -> MKMapView {
         mapView.showsUserLocation = true
+        mapView.userTrackingMode = .follow
         mapView.delegate = context.coordinator
         return mapView
     }
     
     func updateUIView(_ uiView: MKMapView, context: Context) {
-        if let userLocation = uiView.userLocation.location {
+        if shouldRecenter { // only auto zoom on the first time
+            if let userLocation = uiView.userLocation.location {
                 uiView.centerCoordinate = userLocation.coordinate
                 let coordinateRegion = MKCoordinateRegion(center: uiView.centerCoordinate, latitudinalMeters: 500, longitudinalMeters: 500)
                 uiView.showsCompass = true
                 uiView.setRegion(coordinateRegion, animated: true)
             }
+        }
     }
     
     func makeCoordinator() -> Coordinator {
@@ -116,6 +125,7 @@ struct MapView: UIViewRepresentable {
             let coordinateRegion = MKCoordinateRegion(center: mapView.centerCoordinate, latitudinalMeters: 500, longitudinalMeters: 500)
             mapView.showsCompass = true
             mapView.setRegion(coordinateRegion, animated: true)
+            
         }
     }
 }
@@ -156,6 +166,14 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     func requestAuthorization() {
         locationManager.requestWhenInUseAuthorization()
+    }
+    
+    func stopUpdatingLocation(){
+        locationManager.stopUpdatingLocation()
+    }
+    
+    func startUpdatingLocation(){
+        locationManager.startUpdatingLocation()
     }
 }
 
