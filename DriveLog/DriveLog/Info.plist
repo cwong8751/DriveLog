@@ -20,6 +20,8 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Needs access to location to record location </string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Needs access to location to record location </string>
 	<key>UIApplicationSceneManifest</key>

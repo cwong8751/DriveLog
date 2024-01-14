@@ -6,15 +6,10 @@ struct ContentView: View {
     @State var isSettingsSheetPresented = false
     @State var isLogging = false
     
-    
     var body: some View {
         ZStack {
-            MapView()
+            Map(coordinateRegion: $locationManager.region, interactionModes: [], showsUserLocation: true)
                 .edgesIgnoringSafeArea(.all)
-                .onAppear {
-                    locationManager.requestAuthorization()
-                    
-                }
             
             VStack{
                 HStack{
@@ -70,13 +65,22 @@ struct ContentView: View {
                     
                     // the "go" action button
                     Button(action: {
-                        isLogging.toggle() // switch statuses
+                        isLogging.toggle()
+                        
+                        // handle button press what to do
+                        if isLogging {
+                            // should start logging
+                            logPath { coordinates in
+                                print(coordinates.description)
+                            }
+                        }
+                        
                     }) {
-                        Text(isLogging ? "PAUSE" : "GO")
+                        Text(isLogging ? "STOP" : "GO")
                             .font(isLogging ? .title : .largeTitle)
                             .foregroundColor(.white)
                             .frame(width: 100, height: 100)
-                            .background(isLogging ? Color.orange : Color.green)
+                            .background(isLogging ? Color.red : Color.green)
                             .clipShape(Circle())
                     }
                     .padding(.bottom, 20)
@@ -85,97 +89,95 @@ struct ContentView: View {
                     Spacer()
                     Spacer()
                 }
-                
+                 
             }
         }
         .edgesIgnoringSafeArea(.all)
         .navigationBarHidden(true)
     }
-}
-
-struct MapView: UIViewRepresentable {
-    let mapView = MKMapView()
-    @State var shouldRecenter = true
     
-    func makeUIView(context: Context) -> MKMapView {
-        mapView.showsUserLocation = true
-        mapView.userTrackingMode = .follow
-        mapView.delegate = context.coordinator
-        return mapView
-    }
-    
-    func updateUIView(_ uiView: MKMapView, context: Context) {
-        if shouldRecenter { // only auto zoom on the first time
-            if let userLocation = uiView.userLocation.location {
-                uiView.centerCoordinate = userLocation.coordinate
-                let coordinateRegion = MKCoordinateRegion(center: uiView.centerCoordinate, latitudinalMeters: 500, longitudinalMeters: 500)
-                uiView.showsCompass = true
-                uiView.setRegion(coordinateRegion, animated: true)
+    // function to log path of user
+    func logPath(completion: @escaping ([CLLocationCoordinate2D]) -> Void){
+        print("Start logging path...")
+        // run in background thread
+        DispatchQueue.global().async{
+            var coordinates: [CLLocationCoordinate2D] = []
+            print("isLogging status : " + String(isLogging))
+            while isLogging {
+                
+                if let coord = locationManager.userCoordinates {
+                    coordinates.append(coord)
+                    print("User Coordinates: \(coord.latitude), \(coord.longitude)")
+                }
+                sleep(3) // for test
             }
-        }
-    }
-    
-    func makeCoordinator() -> Coordinator {
-        return Coordinator()
-    }
-    
-    class Coordinator: NSObject, MKMapViewDelegate {
-        func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
-            mapView.centerCoordinate = userLocation.coordinate
-            let coordinateRegion = MKCoordinateRegion(center: mapView.centerCoordinate, latitudinalMeters: 500, longitudinalMeters: 500)
-            mapView.showsCompass = true
-            mapView.setRegion(coordinateRegion, animated: true)
             
+            // when the user presses the stop button
+            DispatchQueue.main.async {
+                            print("Stop logging")
+                            // Call the completion handler with the logged coordinates
+                            completion(coordinates)
+                        }
         }
     }
 }
 
-
-class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
-    let locationManager = CLLocationManager()
+final class LocationManager: NSObject, ObservableObject {
+    private let locationManager = CLLocationManager()
     
-    @Published var authorizationStatus: CLAuthorizationStatus = .notDetermined
-    
-    var authorizationStatusString: String {
-        switch authorizationStatus {
-        case .authorizedWhenInUse:
-            return "Authorized When In Use"
-        case .authorizedAlways:
-            return "Authorized Always"
-        case .denied:
-            return "Denied"
-        case .restricted:
-            return "Restricted"
-        case .notDetermined:
-            return "Not Determined"
-        @unknown default:
-            fatalError("Unexpected case in authorizationStatus")
-        }
-    }
+    @Published var region = MKCoordinateRegion(
+        center: .init(latitude: 37.334_900, longitude: -122.009_020),
+        span: .init(latitudeDelta: 0.2, longitudeDelta: 0.2)
+    )
+        
+    // published variable to make user coordinates accessible in content view
+    @Published var userCoordinates: CLLocationCoordinate2D? = nil
     
     override init() {
         super.init()
         
-        locationManager.delegate = self
-        authorizationStatus = CLLocationManager.authorizationStatus()
+        self.locationManager.delegate = self
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        self.setup()
     }
     
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        authorizationStatus = CLLocationManager.authorizationStatus()
-    }
-    
-    func requestAuthorization() {
-        locationManager.requestWhenInUseAuthorization()
-    }
-    
-    func stopUpdatingLocation(){
-        locationManager.stopUpdatingLocation()
-    }
-    
-    func startUpdatingLocation(){
-        locationManager.startUpdatingLocation()
+    func setup() {
+        switch locationManager.authorizationStatus {
+        //If we are authorized then we request location just once, to center the map
+        case .authorizedWhenInUse:
+            locationManager.requestLocation()
+        //If we don´t, we request authorization
+        case .notDetermined:
+            locationManager.startUpdatingLocation()
+            locationManager.requestWhenInUseAuthorization()
+        default:
+            break
+        }
     }
 }
+
+extension LocationManager: CLLocationManagerDelegate {
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        guard .authorizedWhenInUse == manager.authorizationStatus else { return }
+        locationManager.requestLocation()
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Something went wrong: \(error)")
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        locationManager.stopUpdatingLocation()
+        locations.last.map {
+            userCoordinates = $0.coordinate // update coordinates to published variable
+            region = MKCoordinateRegion(
+                center: $0.coordinate,
+                span: .init(latitudeDelta: 0.01, longitudeDelta: 0.01)
+            )
+        }
+    }
+}
+
 
 struct HalfwayModalTransition: ViewModifier {
     func body(content: Content) -> some View {
