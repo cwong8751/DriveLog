@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C31698362B544E6A00F97F57 /* ListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C31698352B544E6A00F97F57 /* ListView.swift */; };
 		C3AB37CC2B0BE12800F1E34C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3AB37CB2B0BE12800F1E34C /* SettingsView.swift */; };
 		C3AED1672B0408820097A428 /* DriveLogApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3AED1662B0408820097A428 /* DriveLogApp.swift */; };
 		C3AED1692B0408820097A428 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3AED1682B0408820097A428 /* ContentView.swift */; };
@@ -15,6 +16,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C31698352B544E6A00F97F57 /* ListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListView.swift; sourceTree = "<group>"; };
 		C3AB37CB2B0BE12800F1E34C /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C3AED1632B0408820097A428 /* DriveLog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DriveLog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3AED1662B0408820097A428 /* DriveLogApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriveLogApp.swift; sourceTree = "<group>"; };
@@ -54,6 +56,7 @@
 		C3AED1652B0408820097A428 /* DriveLog */ = {
 			isa = PBXGroup;
 			children = (
+				C31698352B544E6A00F97F57 /* ListView.swift */,
 				C3AED1662B0408820097A428 /* DriveLogApp.swift */,
 				C3AED1682B0408820097A428 /* ContentView.swift */,
 				C3AB37CB2B0BE12800F1E34C /* SettingsView.swift */,
@@ -141,6 +144,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C31698362B544E6A00F97F57 /* ListView.swift in Sources */,
 				C3AB37CC2B0BE12800F1E34C /* SettingsView.swift in Sources */,
 				C3AED1692B0408820097A428 /* ContentView.swift in Sources */,
 				C3AED1672B0408820097A428 /* DriveLogApp.swift in Sources */,

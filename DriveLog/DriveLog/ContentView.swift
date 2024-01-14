@@ -7,115 +7,116 @@ struct ContentView: View {
     @State var isLogging = false
     
     var body: some View {
-        ZStack {
-            Map(coordinateRegion: $locationManager.region, interactionModes: .all
-                , showsUserLocation: true)
+        NavigationView{
+            ZStack {
+                Map(coordinateRegion: $locationManager.region, interactionModes: .all
+                    , showsUserLocation: true)
                 .edgesIgnoringSafeArea(.all)
-            
-            VStack{
-                HStack{
-                    Spacer()
-                    Text("DriveLog")
-                        .font(.title)
-                        .foregroundColor(.white)
-                    Spacer()
-                }
-                .padding(.top, 50)
-                .frame(maxWidth: .infinity)
-                .background(
-                    LinearGradient(gradient: Gradient(colors: [Color.black.opacity(0.3), Color.clear]), startPoint: .top, endPoint: .bottom)
-                )
                 
-                Spacer()
-                
-                HStack {
-                    
-                    Spacer()
-                    
-                    // settings button
-                    Button(action: {
-                        isSettingsSheetPresented.toggle()
-                    }) {
-                        Image(systemName: "gear")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 40, height: 40)
+                VStack{
+                    HStack{
+                        Spacer()
+                        Text("DriveLog")
+                            .font(.title)
                             .foregroundColor(.white)
-                            .padding(3)
-                            .background(Color.blue)
-                            .clipShape(Circle())
+                        Spacer()
                     }
-                    .padding(.bottom, 20)
-                    .shadow(radius: 3)
-                    .sheet(isPresented: $isSettingsSheetPresented){
-                        NavigationView {
-                            SettingsView()
-                                .navigationBarTitle("Settings", displayMode: .inline)
+                    .padding(.top, 50)
+                    .frame(maxWidth: .infinity)
+                    .background(
+                        LinearGradient(gradient: Gradient(colors: [Color.black.opacity(0.3), Color.clear]), startPoint: .top, endPoint: .bottom)
+                    )
+                    
+                    Spacer()
+                    
+                    HStack {
+                        
+                        Spacer()
+                        
+                        // settings button
+                        Button(action: {
+                            isSettingsSheetPresented.toggle()
+                        }) {
+                            Image(systemName: "gear")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 40, height: 40)
+                                .foregroundColor(.white)
+                                .padding(3)
+                                .background(Color.blue)
+                                .clipShape(Circle())
+                        }
+                        .padding(.bottom, 20)
+                        .shadow(radius: 3)
+                        .sheet(isPresented: $isSettingsSheetPresented){
+                            NavigationView {
+                                SettingsView()
+                                    .navigationBarTitle("Settings", displayMode: .inline)
+                                
+                                    .navigationBarItems(
+                                        leading: Button("Exit") {
+                                            isSettingsSheetPresented.toggle()
+                                        }
+                                    )
+                            }
                             
-                                .navigationBarItems(
-                                    leading: Button("Exit") {
-                                        isSettingsSheetPresented.toggle()
-                                    }
-                                )
                         }
                         
-                    }
-                    
-                    Spacer()
-                    
-                    // the "go" action button
-                    Button(action: {
-                        isLogging.toggle()
+                        Spacer()
                         
-                        // handle button press what to do
-                        if isLogging {
-                            // should start logging
-                            logPath { coordinates in
-                                // handle logged coordinates
-                                
-                                // check empty
-                                if coordinates.count > 0 {
-                                    savePath(coordinates: coordinates)
+                        // the "go" action button
+                        Button(action: {
+                            isLogging.toggle()
+                            
+                            // handle button press what to do
+                            if isLogging {
+                                // should start logging
+                                logPath { coordinates in
+                                    // handle logged coordinates
+                                    
+                                    // check empty
+                                    if coordinates.count > 0 {
+                                        savePath(coordinates: coordinates)
+                                    }
                                 }
                             }
+                            
+                        }) {
+                            Text(isLogging ? "STOP" : "GO")
+                                .font(isLogging ? .title : .largeTitle)
+                                .foregroundColor(.white)
+                                .frame(width: 100, height: 100)
+                                .background(isLogging ? Color.red : Color.green)
+                                .clipShape(Circle())
                         }
+                        .padding(.bottom, 20)
+                        .shadow(radius: 5)
                         
-                    }) {
-                        Text(isLogging ? "STOP" : "GO")
-                            .font(isLogging ? .title : .largeTitle)
-                            .foregroundColor(.white)
-                            .frame(width: 100, height: 100)
-                            .background(isLogging ? Color.red : Color.green)
-                            .clipShape(Circle())
-                    }
-                    .padding(.bottom, 20)
-                    .shadow(radius: 5)
-                    
-                    Spacer()
-                    
-                    // show path button
-                    Button(action: {
+                        Spacer()
                         
-                    }){
-                        Image(systemName: "figure.walk")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 30, height: 30)
-                            .foregroundColor(.white)
-                            .padding(10)
-                            .background(Color.orange)
-                            .clipShape(Circle())
+                        // show path button
+                        NavigationLink(destination: ListView()){
+                            Image(systemName: "figure.walk")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 30, height: 30)
+                                .foregroundColor(.white)
+                                .padding(10)
+                                .background(Color.orange)
+                                .clipShape(Circle())
+                        }
+                        .padding(.bottom, 20)
+                        .shadow(radius: 3)
+                        .navigationBarTitle("Exit", displayMode: .inline)
+                        
+                        Spacer()
                     }
-                    .padding(.bottom, 20)
-                    .shadow(radius: 3)
-                
-                    Spacer()
+                    
                 }
-                 
             }
+            .edgesIgnoringSafeArea(.all)
+            .navigationBarHidden(true)
         }
-        .edgesIgnoringSafeArea(.all)
-        .navigationBarHidden(true)
     }
     
     // function to log path of user
