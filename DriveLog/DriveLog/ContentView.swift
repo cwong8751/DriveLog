@@ -8,7 +8,8 @@ struct ContentView: View {
     
     var body: some View {
         ZStack {
-            Map(coordinateRegion: $locationManager.region, interactionModes: [], showsUserLocation: true)
+            Map(coordinateRegion: $locationManager.region, interactionModes: .all
+                , showsUserLocation: true)
                 .edgesIgnoringSafeArea(.all)
             
             VStack{
@@ -19,7 +20,7 @@ struct ContentView: View {
                         .foregroundColor(.white)
                     Spacer()
                 }
-                .padding(.top, 40)
+                .padding(.top, 50)
                 .frame(maxWidth: .infinity)
                 .background(
                     LinearGradient(gradient: Gradient(colors: [Color.black.opacity(0.3), Color.clear]), startPoint: .top, endPoint: .bottom)
@@ -30,7 +31,6 @@ struct ContentView: View {
                 HStack {
                     
                     Spacer()
-                        .frame(width: 20)
                     
                     // settings button
                     Button(action: {
@@ -71,7 +71,12 @@ struct ContentView: View {
                         if isLogging {
                             // should start logging
                             logPath { coordinates in
-                                print(coordinates.description)
+                                // handle logged coordinates
+                                
+                                // check empty
+                                if coordinates.count > 0 {
+                                    savePath(coordinates: coordinates)
+                                }
                             }
                         }
                         
@@ -87,6 +92,23 @@ struct ContentView: View {
                     .shadow(radius: 5)
                     
                     Spacer()
+                    
+                    // show path button
+                    Button(action: {
+                        
+                    }){
+                        Image(systemName: "figure.walk")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(.white)
+                            .padding(10)
+                            .background(Color.orange)
+                            .clipShape(Circle())
+                    }
+                    .padding(.bottom, 20)
+                    .shadow(radius: 3)
+                
                     Spacer()
                 }
                  
@@ -118,6 +140,37 @@ struct ContentView: View {
                             // Call the completion handler with the logged coordinates
                             completion(coordinates)
                         }
+        }
+    }
+    
+    // function to save logged path
+    func savePath(coordinates: [CLLocationCoordinate2D]){
+        do{
+            // map data coordinate2d
+            let coordinateMap = coordinates.map{["latitude": $0.latitude, "longitude": $0.longitude]}
+            let data = try JSONSerialization.data(withJSONObject: coordinateMap, options: .prettyPrinted) // convert map to json to write to filesystem
+            
+            if let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+                
+                // generate file name
+                let cDate = Date()
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyyMMddHHmmss"
+                let date = dateFormatter.string(from: cDate)
+                let fileName = "trip" + date
+                
+
+                // Create the file URL
+                let fileURL = documentDirectory.appendingPathComponent(fileName).appendingPathExtension("json")
+
+                // Write JSON data to the file
+                try data.write(to: fileURL, options: .atomic)
+                print("File saved successfully at \(fileURL)")
+                
+            }
+        }
+        catch{
+            print("Error: \(error.localizedDescription)")
         }
     }
 }
