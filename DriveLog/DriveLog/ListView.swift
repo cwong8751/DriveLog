@@ -14,11 +14,17 @@ struct ListView: View {
             
             // check empty
             if logs.isEmpty {
-                Text("You have no drives so far")
+                Text("You have no drives so far") // empty message
             }
             else{
-                List(formatLogs(logs: logs), id: \.self) { timestamp in
-                    Text(timestamp)
+                List{
+                    ForEach(formatLogs(logs: logs), id: \.self) { timestamp in
+                        Text(timestamp)
+                    } // display the list history from the formatLogs function
+                    .onDelete(perform: delete)
+                }
+                .toolbar{
+                    EditButton() // create a edit button for the list
                 }
             }
         }
@@ -71,6 +77,7 @@ struct ListView: View {
                     return ["Error occurred"]
                 }
 
+                // format for displaying in the list
                 dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
                 let formattedDate = dateFormatter.string(from: date)
                 let formatted = "Drive on " + formattedDate
@@ -80,6 +87,11 @@ struct ListView: View {
         }
 
         return formattedList
+    }
+    
+    // dummy delete function for list
+    func delete(at offsets: IndexSet){
+        //TODO: finish this function 
     }
 
 }
