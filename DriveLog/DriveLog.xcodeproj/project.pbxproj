@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		C31698362B544E6A00F97F57 /* ListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C31698352B544E6A00F97F57 /* ListView.swift */; };
+		C34A1BC82BCC662D00111339 /* TripView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34A1BC72BCC662D00111339 /* TripView.swift */; };
+		C34A1BCB2BCC689E00111339 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34A1BCA2BCC689E00111339 /* LocationManager.swift */; };
 		C3AB37CC2B0BE12800F1E34C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3AB37CB2B0BE12800F1E34C /* SettingsView.swift */; };
 		C3AED1672B0408820097A428 /* DriveLogApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3AED1662B0408820097A428 /* DriveLogApp.swift */; };
 		C3AED1692B0408820097A428 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3AED1682B0408820097A428 /* ContentView.swift */; };
@@ -17,6 +19,8 @@
 
 /* Begin PBXFileReference section */
 		C31698352B544E6A00F97F57 /* ListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListView.swift; sourceTree = "<group>"; };
+		C34A1BC72BCC662D00111339 /* TripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripView.swift; sourceTree = "<group>"; };
+		C34A1BCA2BCC689E00111339 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		C3AB37CB2B0BE12800F1E34C /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C3AED1632B0408820097A428 /* DriveLog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DriveLog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3AED1662B0408820097A428 /* DriveLogApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriveLogApp.swift; sourceTree = "<group>"; };
@@ -37,6 +41,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C34A1BC92BCC689000111339 /* Location */ = {
+			isa = PBXGroup;
+			children = (
+				C34A1BCA2BCC689E00111339 /* LocationManager.swift */,
+			);
+			path = Location;
+			sourceTree = "<group>";
+		};
 		C3AED15A2B0408810097A428 = {
 			isa = PBXGroup;
 			children = (
@@ -56,6 +68,7 @@
 		C3AED1652B0408820097A428 /* DriveLog */ = {
 			isa = PBXGroup;
 			children = (
+				C34A1BC92BCC689000111339 /* Location */,
 				C31698352B544E6A00F97F57 /* ListView.swift */,
 				C3AED1662B0408820097A428 /* DriveLogApp.swift */,
 				C3AED1682B0408820097A428 /* ContentView.swift */,
@@ -63,6 +76,7 @@
 				C3AED16A2B04088A0097A428 /* Assets.xcassets */,
 				C3AED16F2B04088A0097A428 /* Info.plist */,
 				C3AED16C2B04088A0097A428 /* Preview Content */,
+				C34A1BC72BCC662D00111339 /* TripView.swift */,
 			);
 			path = DriveLog;
 			sourceTree = "<group>";
@@ -146,7 +160,9 @@
 			files = (
 				C31698362B544E6A00F97F57 /* ListView.swift in Sources */,
 				C3AB37CC2B0BE12800F1E34C /* SettingsView.swift in Sources */,
+				C34A1BCB2BCC689E00111339 /* LocationManager.swift in Sources */,
 				C3AED1692B0408820097A428 /* ContentView.swift in Sources */,
+				C34A1BC82BCC662D00111339 /* TripView.swift in Sources */,
 				C3AED1672B0408820097A428 /* DriveLogApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

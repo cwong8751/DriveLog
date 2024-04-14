@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 //TODO: optimize this
 struct ListView: View {
     // state variables
@@ -25,7 +24,10 @@ struct ListView: View {
                 
             List{
                 ForEach(trips, id: \.self) { timestamp in
-                    Text(timestamp)
+                    // wrap with navigation link to make each item clickable
+                    NavigationLink(destination: TripView(trip: timestamp)){
+                        Text(timestamp)
+                    }
                 } // display the list history from the formatLogs function
                     .onDelete(perform: delete)
                 }
