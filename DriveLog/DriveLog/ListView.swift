@@ -7,28 +7,45 @@
 
 import SwiftUI
 
+
+//TODO: optimize this
 struct ListView: View {
+    // state variables
+    @State private var showEmptyText = false
+    
+    @State private var trips: [String] = [] // stores the actual human readable titles
+    
     var body: some View {
         VStack {
-            let logs  = getLogs() // get logs from filesystem
             
-            // check empty
-            if logs.isEmpty {
-                Text("You have no drives so far") // empty message
+            if(showEmptyText){
+                Spacer()
+                Text("You have no trips so far")
             }
-            else{
-                List{
-                    ForEach(formatLogs(logs: logs), id: \.self) { timestamp in
-                        Text(timestamp)
-                    } // display the list history from the formatLogs function
+                
+            List{
+                ForEach(trips, id: \.self) { timestamp in
+                    Text(timestamp)
+                } // display the list history from the formatLogs function
                     .onDelete(perform: delete)
                 }
                 .toolbar{
                     EditButton() // create a edit button for the list
                 }
+        }
+        .onAppear{
+            let logs = getLogs()
+            
+            // check empty
+            if logs.isEmpty {
+                showEmptyText = true
+            }
+            else{
+                // display all trips
+                trips = formatLogs(logs: logs)
             }
         }
-        .navigationBarTitle("Drives", displayMode: .inline)
+        .navigationBarTitle("Trips", displayMode: .inline)
     }
     
     // function to get list of drive logs in the phone filesystem
@@ -45,6 +62,9 @@ struct ListView: View {
                     let fileName = url.lastPathComponent
                     return fileName.hasPrefix("trip") && url.pathExtension.lowercased() == "json"
                 }
+                
+                // print out everything in filterlist
+                print(filterList)
                 
                 return filterList
             } catch {
@@ -80,7 +100,7 @@ struct ListView: View {
                 // format for displaying in the list
                 dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
                 let formattedDate = dateFormatter.string(from: date)
-                let formatted = "Drive on " + formattedDate
+                let formatted = "Trip on " + formattedDate
 
                 formattedList.append(formatted)
             }
@@ -91,11 +111,70 @@ struct ListView: View {
     
     // dummy delete function for list
     func delete(at offsets: IndexSet){
-        //TODO: finish this function 
+        //TODO: finish this function
+        
+        // offsets is usually an array
+        for index in offsets {
+            print("index: ", index)
+            print("item: ", trips[index])
+            
+            let itemToDelete = trips[index]
+            // extract date and time from human readable index
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            
+            let dtString = itemToDelete.replacingOccurrences(of: "Trip on ", with: "") // remove the prefix
+            
+            if let date = dateFormatter.date(from: dtString) {
+                
+                // convert to file format
+                let df = DateFormatter()
+                df.dateFormat = "yyyyMMddHHmmss"
+                
+                let ds = df.string(from: date) // the final form
+                
+                
+                let fileManager = FileManager.default
+                guard let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else{
+                    print("Failed to get the documents directory.")
+                    return
+                }
+                
+                // delete the trip file
+                let furl = documentsDirectory.appendingPathComponent("trip" + ds).appendingPathExtension("json")
+                print(dateFormatter.string(from: date))
+                print("File to be deleted: ", furl)
+                
+                
+                do{
+                    try fileManager.removeItem(at: furl)
+                    print("File deleted: \(furl.lastPathComponent)")
+                } catch {
+                    print("Failed to delete file: \(error)")
+                }
+                
+                               
+                // remove item from trips
+                trips.remove(at: index)
+                
+                // update ui
+                if trips.count == 0 {
+                    showEmptyText = true
+                }
+            }
+            else{
+                print("Error occured while converting human readable index to file name for deletion")
+            }
+        }
     }
 
 }
 
-#Preview {
-    ListView()
+
+struct ListViewPreview: PreviewProvider {
+    static var previews: some View {
+        Group {
+            ListView()
+        }
+    }
 }
