@@ -15,15 +15,15 @@ A simple trip tracker for cars and motorcycles.
 ## Screenshots (v1.0)
 <table>
   <tr>
-    <td align="center"><img src="./screenshots/home.png" alt="Default screen" width="200"></td>
-    <td align="center"><img src="./screenshots/record.png" alt="Record screen" width="200"></td>
-    <td align="center"><img src="./screenshots/listview.png" alt="Trip list view" width="200"></td>
+    <td align="center"><img src="./screenshots/home.png" alt="Default screen" width="200"><br><p>Default view</p></td>
+    <td align="center"><img src="./screenshots/record.png" alt="Record screen" width="200"><br><p>Record view</p></td>
+    <td align="center"><img src="./screenshots/listview.png" alt="Trip list view" width="200"><br><p>Trip list view</p></td>
   </tr>
   <tr>
-    <td align="center"><img src="./screenshots/tripview.png" alt="Trip details view" width="200"></td>
-    <td align="center"><img src="./screenshots/settings.png" alt="Settings screen" width="200"></td>
+    <td align="center"><img src="./screenshots/tripview.png" alt="Trip details view" width="200"><br><p>Trip detail view</p></td>
+    <td align="center"><img src="./screenshots/settings.png" alt="Settings screen" width="200"><br><p>Settings view</p></td>
     <td></td> <!-- Add an empty cell if the number of screenshots is odd -->
   </tr>
-</table>s
+</table>
 
 
