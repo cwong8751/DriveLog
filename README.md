@@ -13,11 +13,17 @@ A simple trip tracker for cars and motorcycles.
 - Turn-by-turn navigation?
 
 ## Screenshots (v1.0)
-![Default screen](./screenshots/home.png)
-![Record screen](./screenshots/record.png)
-![Trip list view](./screenshots/listview.png)
-![Trip details view](./screenshots/tripview.png)
-![Settings screen](./screenshots/settings.png)
-
+<table>
+  <tr>
+    <td align="center"><img src="./screenshots/home.png" alt="Default screen" width="200"></td>
+    <td align="center"><img src="./screenshots/record.png" alt="Record screen" width="200"></td>
+    <td align="center"><img src="./screenshots/listview.png" alt="Trip list view" width="200"></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="./screenshots/tripview.png" alt="Trip details view" width="200"></td>
+    <td align="center"><img src="./screenshots/settings.png" alt="Settings screen" width="200"></td>
+    <td></td> <!-- Add an empty cell if the number of screenshots is odd -->
+  </tr>
+</table>s
 
 
