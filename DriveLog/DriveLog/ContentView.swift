@@ -18,7 +18,7 @@ struct ContentView: View {
                         Spacer()
                         Text("DriveLog")
                             .font(.title)
-                            .foregroundColor(.white)
+                            .foregroundColor(.gray)
                         Spacer()
                     }
                     .padding(.top, 50)

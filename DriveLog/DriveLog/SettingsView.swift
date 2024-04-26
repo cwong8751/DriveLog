@@ -9,9 +9,12 @@ import SwiftUI
 
 struct SettingsView: View {
     var speedUnits = ["mph", "kph"]
-    @State private var selectedSpeed = "mph"
     var distUnits = ["miles", "kilometers"]
-    @State private var selectedDist = "miles"
+    
+    // use user default for persistent app storage
+    @AppStorage("selectedSpeed") var selectedSpeed = "mph"
+    @AppStorage("selectedDist") var selectedDist = "miles"
+
     
     var body: some View {
         Form{

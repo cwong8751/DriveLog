@@ -111,9 +111,8 @@ struct ListView: View {
         return formattedList
     }
     
-    // dummy delete function for list
+    // delete function for list
     func delete(at offsets: IndexSet){
-        //TODO: finish this function
         
         // offsets is usually an array
         for index in offsets {
