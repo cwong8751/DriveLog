@@ -12,3 +12,12 @@ A simple trip tracker for cars and motorcycles.
 - Share trips with others
 - Turn-by-turn navigation?
 
+## Screenshots (v1.0)
+![Default screen](./screenshots/home.png)
+![Record screen](./screenshots/record.png)
+![Trip list view](./screenshots/listview.png)
+![Trip details view](./screenshots/tripview.png)
+![Settings screen](./screenshots/settings.png)
+
+
+
