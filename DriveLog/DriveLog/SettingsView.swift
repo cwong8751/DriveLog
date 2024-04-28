@@ -37,7 +37,7 @@ struct SettingsView: View {
                 // my information sections
                 Section(header: Text("Author")){
                     Text("Carl")
-                    Text("http://www.wqis.xyz")
+                    Text("https://cwong8751.github.io/DriveLog/")
                 }
                 
                 if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {

@@ -18,6 +18,7 @@ final class LocationManager: NSObject, ObservableObject {
         
     // published variable to make user coordinates accessible in content view
     @Published var userCoordinates: CLLocationCoordinate2D? = nil
+    @Published var userSpeed: CLLocationSpeed? = 0.0
     
     override init() {
         super.init()
@@ -55,6 +56,7 @@ extension LocationManager: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         locations.last.map {
             userCoordinates = $0.coordinate // update coordinates to published variable
+            userSpeed = $0.speed // update speed
             region = MKCoordinateRegion(
                 center: $0.coordinate,
                 span: .init(latitudeDelta: 0.01, longitudeDelta: 0.01)

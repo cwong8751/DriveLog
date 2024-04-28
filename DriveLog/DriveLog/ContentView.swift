@@ -6,6 +6,10 @@ struct ContentView: View {
     @State var isSettingsSheetPresented = false
     @State var isLogging = false
     
+    // current speed and distance
+    @State var curSpeed: Double = 0.0
+    @State var curDistance: Double = 0.0
+    
     var body: some View {
         NavigationView{
             ZStack {
@@ -28,6 +32,46 @@ struct ContentView: View {
                     )
                     
                     Spacer()
+                    
+                    if isLogging {
+                        VStack{
+                            HStack{
+                                Text(String(curSpeed))
+                                
+                                Spacer()
+                                
+                                Text(String(curDistance))
+                                
+                                Spacer()
+                                
+                                Text("--")
+                            }
+                            .padding()
+                            
+                            HStack{
+                                Text("Speed")
+                                    .italic()
+                                    .textCase(.uppercase)
+                                
+                                Spacer()
+                                
+                                Text("Distance")
+                                    .italic()
+                                    .textCase(.uppercase)
+                                
+                                Spacer()
+                                
+                                Text("Time")
+                                    .italic()
+                                    .textCase(.uppercase)
+                            }
+                            .padding()
+                        }
+                        .background(.white)
+                        .opacity(0.8)
+                        .cornerRadius(5)
+                        .padding()
+                    }
                     
                     HStack {
                         
@@ -71,12 +115,12 @@ struct ContentView: View {
                             // handle button press what to do
                             if isLogging {
                                 // should start logging
-                                logPath { coordinates in
+                                logPath { coordinates, speeds in
                                     // handle logged coordinates
                                     
                                     // check empty
                                     if coordinates.count > 0 {
-                                        savePath(coordinates: coordinates)
+                                        savePath(coordinates: coordinates, speeds: speeds)
                                     }
                                 }
                             }
@@ -120,32 +164,49 @@ struct ContentView: View {
     }
     
     // function to log path of user
-    func logPath(completion: @escaping ([CLLocationCoordinate2D]) -> Void){
+    func logPath(completion: @escaping ([CLLocationCoordinate2D], [CLLocationSpeed]) -> Void){
         print("Start logging path...")
         // run in background thread
         DispatchQueue.global().async{
+            
+            // define coordinate and speed list variables
             var coordinates: [CLLocationCoordinate2D] = []
+            var speeds: [CLLocationSpeed] = []
+            
+            // logging loop
             print("isLogging status : " + String(isLogging))
             while isLogging {
                 
+                // record speed
+                if let speed = locationManager.userSpeed {
+                    speeds.append(speed)
+                    
+                    // set user current speed
+                    curSpeed = speed
+                    
+                    //TODO: update live user speed, distance and time
+                }
+                
+                // record location
                 if let coord = locationManager.userCoordinates {
                     coordinates.append(coord)
-                    print("User Coordinates: \(coord.latitude), \(coord.longitude)")
+                    //print("User Coordinates: \(coord.latitude), \(coord.longitude)")
                 }
+                
                 sleep(3) // for test
             }
             
             // when the user presses the stop button
             DispatchQueue.main.async {
                             print("Stop logging")
-                            // Call the completion handler with the logged coordinates
-                            completion(coordinates)
+                            // Call the completion handler with the coordinates and speed
+                            completion(coordinates, speeds)
                         }
         }
     }
     
     // function to save logged path
-    func savePath(coordinates: [CLLocationCoordinate2D]){
+    func savePath(coordinates: [CLLocationCoordinate2D], speeds: [CLLocationSpeed]){
         do{
             // map data coordinate2d
             let coordinateMap = coordinates.map{["latitude": $0.latitude, "longitude": $0.longitude]}
