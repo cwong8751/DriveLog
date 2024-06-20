@@ -8,11 +8,13 @@
 import SwiftUI
 import MapKit
 import Foundation
+import AlertToast
 
 //TODO: either use mapview for both contentview and tripview or use Map()
 struct TripView: View {
     // define variables
     @State private var coordinatesCL : [CLLocationCoordinate2D] = []
+    @State private var speedsCL : [CLLocationSpeed] = []
     @State private var tripLine : MKPolyline? = nil
     @State private var tripRegion : MKCoordinateRegion? = nil
     
@@ -27,6 +29,12 @@ struct TripView: View {
     @AppStorage("selectedSpeed") var speedUnit = "mph"
     @AppStorage("selectedDist") var distanceUnit = "miles"
     
+    // get current device theme
+    @Environment(\.colorScheme) var colorScheme
+    
+    // error alert variable
+    @State private var showErrorAlert = false
+    
     var body: some View {
         ZStack{
             // display map view for trip
@@ -39,20 +47,19 @@ struct TripView: View {
                 Spacer()
                 
                 VStack{
-                    Text(trip)
-                        .multilineTextAlignment(.leading)
-                    
                     // title text
                     HStack{
                         Spacer()
                         
-                        Text("Avg speed")
+                        Text("Avg Speed")
                             .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity)
                         
                         Spacer()
                         
-                        Text("Distance")
+                        Text("Total Distance")
                             .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity)
                         
                         Spacer()
                     }
@@ -65,6 +72,7 @@ struct TripView: View {
                             .bold()
                             .font(.system(size: 32))
                             .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity)
                         
                         Spacer()
                         
@@ -72,6 +80,7 @@ struct TripView: View {
                             .bold()
                             .font(.system(size: 32))
                             .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity)
                         
                         Spacer()
                     }
@@ -84,6 +93,7 @@ struct TripView: View {
                             .italic()
                             .textCase(.uppercase)
                             .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity)
                         
                         Spacer()
                         
@@ -91,13 +101,14 @@ struct TripView: View {
                             .italic()
                             .textCase(.uppercase)
                             .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity)
                         
                         Spacer()
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .bottom)
                 .padding()
-                .background(.white)
+                .background(colorScheme == .dark ? Color.black : Color.white)
                 .opacity(0.8)
                 .cornerRadius(5)
             }
@@ -114,46 +125,63 @@ struct TripView: View {
             // call set distance function
             setDistance()
         }
+        .toast(isPresenting: $showErrorAlert) {
+            AlertToast(displayMode: .alert, type: .error(Color.red), title: "Trip details failed to load")
+        }
     }
     
     func loadTrip() {
         print(trip)
         
-        // extract date and time from human readable index
+        // Extract date and time from human-readable index
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         
-        let dtString = trip.replacingOccurrences(of: "Trip on ", with: "") // remove the prefix
+        let dtString = trip.replacingOccurrences(of: "Trip on ", with: "") // Remove the prefix
         
         if let date = dateFormatter.date(from: dtString) {
             
-            // convert to file format
+            // Convert to file format
             let df = DateFormatter()
             df.dateFormat = "yyyyMMddHHmmss"
             
-            let ds = df.string(from: date) // the final form
+            let ds = df.string(from: date) // The final form
             
-            let content = getFileContents(fileName: "trip" + ds) // get actual file content
+            let content = getFileContents(fileName: "trip" + ds) // Get actual file content
             
-            do{
-                // since content is in json, parse json
+            do {
+                // Since content is in JSON, parse JSON
                 let decoder = JSONDecoder()
                 
                 guard let jsonData = content?.data(using: .utf8) else {
-                    print("Error while converting to json")
+                    print("Error while converting to JSON")
                     return
                 }
                 
-                let coordinates = try decoder.decode([Coordinate].self, from: jsonData) // get coordinates
+                // Parse JSON into array of dictionaries
+                let tripData = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [[String: Any]]
                 
-                // plot trip on map
-                coordinatesCL = [] // clear array first
+                print(tripData)
                 
-                for i in coordinates {
-                    coordinatesCL.append(i.locationCoordinate)
+                // Extract coordinates and speeds
+                coordinatesCL = [] // Clear array first
+                speedsCL = []
+                
+                //TODO: test if this actually works, generate a file with speed
+                for dataPoint in tripData ?? [] {
+                    if let latitude = dataPoint["latitude"] as? String,
+                       let longitude = dataPoint["longitude"] as? String,
+                       let speed = dataPoint["speed"] as? CLLocationSpeed {
+                        
+                        let coordinate = CLLocationCoordinate2D(latitude: Double(latitude)!, longitude: Double(longitude)!)
+                        
+                        // append to array
+                        coordinatesCL.append(coordinate)
+                        speedsCL.append(speed)
+                    }
                 }
                 
-                // set coordinate region
+                // Set coordinate region
                 if let firstCoordinate = coordinatesCL.first {
                     tripRegion = MKCoordinateRegion(
                         center: firstCoordinate,
@@ -163,14 +191,14 @@ struct TripView: View {
                 
                 tripLine = MKPolyline(coordinates: coordinatesCL, count: coordinatesCL.count)
             } catch {
-                print("Error while decoding json \(error)")
+                print("Error while decoding JSON \(error)")
                 return
             }
-        }
-        else{
-            print("Error occured while converting human readable index to file name for deletion")
+        } else {
+            print("Error occurred while converting human-readable index to file name for deletion")
         }
     }
+
     
     // function to read file
     func getFileContents(fileName: String) -> String? {
@@ -195,12 +223,24 @@ struct TripView: View {
     
     // function to get avg speed
     func setAvgSpeed(){
+        var total = 0.0;
+        
+        if(speedsCL.count <= 0){
+            showErrorAlert = true
+            return
+        }
         
     }
     
     // function to get distance
     func setDistance(){
         var total = 0.0;
+        
+        // check if is zero
+        if(coordinatesCL.count <= 0){
+            showErrorAlert = true
+            return
+        }
         
         for i in 0..<coordinatesCL.count - 1 {
             let currentLocation = coordinatesCL[i]

@@ -1,5 +1,6 @@
 import SwiftUI
 import MapKit
+import AlertToast
 
 struct ContentView: View {
     @StateObject var locationManager = LocationManager()
@@ -9,6 +10,17 @@ struct ContentView: View {
     // current speed and distance
     @State var curSpeed: Double = 0.0
     @State var curDistance: Double = 0.0
+    
+    // get current device theming
+    @Environment(\.colorScheme) var colorScheme
+    
+    // toast alert state variable
+    @State private var showSavedAlert = false
+    @State private var showSavingAlert = false
+    
+    // speed and distance unit app storage vars
+    @AppStorage("selectedSpeed") var speedUnit = "mph"
+    @AppStorage("selectedDist") var distanceUnit = "miles"
     
     var body: some View {
         NavigationView{
@@ -36,40 +48,54 @@ struct ContentView: View {
                     if isLogging {
                         VStack{
                             HStack{
-                                Text(String(curSpeed))
+                                Text(String(curDistance))
+                                    .multilineTextAlignment(.center)
+                                    .frame(maxWidth: .infinity)
                                 
                                 Spacer()
                                 
-                                Text(String(curDistance))
+                                Text(String(curSpeed))
+                                    .multilineTextAlignment(.center)
+                                    .font(.title)
+                                    .frame(maxWidth: .infinity)
                                 
                                 Spacer()
                                 
                                 Text("--")
+                                    .multilineTextAlignment(.center)
+                                    .frame(maxWidth: .infinity)
                             }
                             .padding()
                             
                             HStack{
-                                Text("Speed")
+                                Text(distanceUnit)
                                     .italic()
                                     .textCase(.uppercase)
+                                    .multilineTextAlignment(.center)
+                                    .frame(maxWidth: .infinity)
                                 
                                 Spacer()
                                 
-                                Text("Distance")
+                                Text(speedUnit)
                                     .italic()
                                     .textCase(.uppercase)
+                                    .multilineTextAlignment(.center)
+                                    .frame(maxWidth: .infinity)
                                 
                                 Spacer()
                                 
                                 Text("Time")
                                     .italic()
                                     .textCase(.uppercase)
+                                    .multilineTextAlignment(.center)
+                                    .frame(maxWidth: .infinity)
                             }
                             .padding()
                         }
-                        .background(.white)
+                        .background(colorScheme == .dark ? Color.black : Color.white)
                         .opacity(0.8)
-                        .cornerRadius(5)
+                        .cornerRadius(10)
+                        .shadow(radius: 5)
                         .padding()
                     }
                     
@@ -161,9 +187,16 @@ struct ContentView: View {
             .edgesIgnoringSafeArea(.all)
             .navigationBarHidden(true)
         }
+        .toast(isPresenting: $showSavedAlert, duration: 1.0){
+            AlertToast(type: .systemImage("checkmark.circle", .green), title: "Trip saved")
+        }
+        .toast(isPresenting: $showSavingAlert){
+            AlertToast(type: .loading, title: "Saving trip...")
+        }
     }
     
     // function to log path of user
+    // default distance is m, speed is m/s
     func logPath(completion: @escaping ([CLLocationCoordinate2D], [CLLocationSpeed]) -> Void){
         print("Start logging path...")
         // run in background thread
@@ -184,13 +217,38 @@ struct ContentView: View {
                     // set user current speed
                     curSpeed = speed
                     
-                    //TODO: update live user speed, distance and time
+                    // speed convert
+                    if(speedUnit == "mph"){
+                        curSpeed *= 2.23694
+                    }
+                    else if(speedUnit == "kph"){
+                        curSpeed *= 3.6
+                    }
+                    
+                    // round speed
+                    curSpeed = (curSpeed * 10).rounded() / 10
+                    
+                    //TODO: update live user time
                 }
                 
                 // record location
                 if let coord = locationManager.userCoordinates {
                     coordinates.append(coord)
                     //print("User Coordinates: \(coord.latitude), \(coord.longitude)")
+                    
+                    // set user current distance
+                    curDistance = calculateTotalDistance(coordinates: coordinates)
+                    
+                    // distance convert
+                    if(distanceUnit == "kilometers"){
+                        curDistance /= 1000
+                    }
+                    else if(distanceUnit == "miles"){
+                        curDistance *= 0.000621371
+                    }
+                    
+                    // round distance
+                    curDistance = (curDistance * 100).rounded() / 100
                 }
                 
                 sleep(3) // for test
@@ -198,18 +256,35 @@ struct ContentView: View {
             
             // when the user presses the stop button
             DispatchQueue.main.async {
-                            print("Stop logging")
-                            // Call the completion handler with the coordinates and speed
-                            completion(coordinates, speeds)
-                        }
+                print("Stop logging")
+                // Call the completion handler with the coordinates and speed
+                completion(coordinates, speeds)
+            }
         }
     }
     
     // function to save logged path
     func savePath(coordinates: [CLLocationCoordinate2D], speeds: [CLLocationSpeed]){
+        showSavingAlert = true
         do{
+            // check length of coordinates and speeds
+            guard coordinates.count == speeds.count else {
+                print("Error: coordinates and speeds are not the same length")
+                showSavingAlert = false
+                // TODO: add toast alert for users
+                return
+            }
+            
+            //TODO: test if this actually works
             // map data coordinate2d
-            let coordinateMap = coordinates.map{["latitude": $0.latitude, "longitude": $0.longitude]}
+            let coordinateMap = zip(coordinates, speeds).map { (coordinate, speed) -> [String: Any] in
+                return [
+                    "latitude": coordinate.latitude,
+                    "longitude": coordinate.longitude,
+                    "speed": speed
+                ]
+            }
+            
             let data = try JSONSerialization.data(withJSONObject: coordinateMap, options: .prettyPrinted) // convert map to json to write to filesystem
             
             if let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
@@ -221,19 +296,38 @@ struct ContentView: View {
                 let date = dateFormatter.string(from: cDate)
                 let fileName = "trip" + date
                 
-
+                
                 // Create the file URL
                 let fileURL = documentDirectory.appendingPathComponent(fileName).appendingPathExtension("json")
-
+                
                 // Write JSON data to the file
                 try data.write(to: fileURL, options: .atomic)
                 print("File saved successfully at \(fileURL)")
                 
+                // update alert toast to user
+                showSavingAlert = false
+                showSavedAlert = true
             }
         }
         catch{
             print("Error: \(error.localizedDescription)")
+            showSavingAlert = false
         }
+    }
+    
+    // function to calculate total distance for display in trip
+    func calculateTotalDistance(coordinates: [CLLocationCoordinate2D]) -> CLLocationDistance {
+        guard coordinates.count > 1 else { return 0.0 }
+        
+        var totalDistance: CLLocationDistance = 0.0
+        
+        for i in 0..<coordinates.count - 1 {
+            let start = CLLocation(latitude: coordinates[i].latitude, longitude: coordinates[i].longitude)
+            let end = CLLocation(latitude: coordinates[i + 1].latitude, longitude: coordinates[i + 1].longitude)
+            totalDistance += start.distance(from: end)
+        }
+        
+        return totalDistance
     }
 }
 

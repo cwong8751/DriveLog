@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -17,6 +17,7 @@
 		C3AED16E2B04088A0097A428 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C3AED16D2B04088A0097A428 /* Preview Assets.xcassets */; };
 		C3C6FB942BCD924C003A40D8 /* Coordinate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3C6FB932BCD924C003A40D8 /* Coordinate.swift */; };
 		C3C6FB9A2BCD9E1B003A40D8 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3C6FB992BCD9E1B003A40D8 /* MapView.swift */; };
+		C3FB18D82C23DB3400F56309 /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = C3FB18D72C23DB3400F56309 /* AlertToast */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C3FB18D82C23DB3400F56309 /* AlertToast in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -111,6 +113,9 @@
 			dependencies = (
 			);
 			name = DriveLog;
+			packageProductDependencies = (
+				C3FB18D72C23DB3400F56309 /* AlertToast */,
+			);
 			productName = DriveLog;
 			productReference = C3AED1632B0408820097A428 /* DriveLog.app */;
 			productType = "com.apple.product-type.application";
@@ -138,6 +143,9 @@
 				Base,
 			);
 			mainGroup = C3AED15A2B0408810097A428;
+			packageReferences = (
+				C3FB18D62C23DB3400F56309 /* XCRemoteSwiftPackageReference "AlertToast" */,
+			);
 			productRefGroup = C3AED1642B0408820097A428 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -360,6 +368,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C3FB18D62C23DB3400F56309 /* XCRemoteSwiftPackageReference "AlertToast" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/elai950/AlertToast.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.9;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C3FB18D72C23DB3400F56309 /* AlertToast */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C3FB18D62C23DB3400F56309 /* XCRemoteSwiftPackageReference "AlertToast" */;
+			productName = AlertToast;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C3AED15B2B0408820097A428 /* Project object */;
 }

@@ -14,14 +14,30 @@ struct ListView: View {
     
     @State private var trips: [String] = [] // stores the actual human readable titles
     
+    // sorting function for list
+    @State private var sortOrder: SortOrder = .newest
+    
+    // list search
+    @State private var searchText: String = ""
+    
+    enum SortOrder{
+        case newest
+        case oldest
+    }
+    
     var body: some View {
         VStack {
             
             if(showEmptyText){
                 Spacer()
                 Text("You have no trips so far")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .multilineTextAlignment(.center)
+                Spacer()
             }
-                
+            
+            // top list menu bar
+            
             List{
                 ForEach(trips, id: \.self) { timestamp in
                     // wrap with navigation link to make each item clickable
@@ -29,11 +45,27 @@ struct ListView: View {
                         Text(timestamp)
                     }
                 } // display the list history from the formatLogs function
-                    .onDelete(perform: delete)
+                .onDelete(perform: delete)
+            }
+            .toolbar {
+                ToolbarItem() {
+                    Menu {
+                        Button(action: { sortOrder = .newest }) {
+                            Label("Sort by Newest", systemImage: sortOrder == .newest ? "checkmark" : "")
+                        }
+                        Button(action: { sortOrder = .oldest }) {
+                            Label("Sort by Oldest", systemImage: sortOrder == .oldest ? "checkmark" : "")
+                        }
+                    } label: {
+                        Label("Sort", systemImage: "")
+                    }
                 }
-                .toolbar{
-                    EditButton() // create a edit button for the list
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    EditButton()
                 }
+            }
+            .searchable(text: $searchText)
         }
         .onAppear{
             let logs = getLogs()
@@ -80,10 +112,10 @@ struct ListView: View {
     // format the logs to human readable form
     func formatLogs(logs: [URL]) -> [String] {
         var formattedList: [String] = [] // construct a array
-
+        
         for url in logs {
             let fileName = url.lastPathComponent // get url
-
+            
             // extract the timestamp part from the url
             if let range = fileName.range(of: "trip") {
                 let startIndex = fileName.index(range.upperBound, offsetBy: 0)
@@ -98,16 +130,16 @@ struct ListView: View {
                     print("Failed to convert timestamp to Date.")
                     return ["Error occurred"]
                 }
-
+                
                 // format for displaying in the list
                 dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
                 let formattedDate = dateFormatter.string(from: date)
-                let formatted = "Trip on " + formattedDate
-
-                formattedList.append(formatted)
+                //let formatted = "Trip on " + formattedDate
+                
+                formattedList.append(formattedDate)
             }
         }
-
+        
         return formattedList
     }
     
@@ -154,7 +186,7 @@ struct ListView: View {
                     print("Failed to delete file: \(error)")
                 }
                 
-                               
+                
                 // remove item from trips
                 trips.remove(at: index)
                 
@@ -168,7 +200,7 @@ struct ListView: View {
             }
         }
     }
-
+    
 }
 
 
