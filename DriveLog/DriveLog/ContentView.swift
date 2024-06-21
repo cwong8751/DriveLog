@@ -186,6 +186,7 @@ struct ContentView: View {
             }
             .edgesIgnoringSafeArea(.all)
             .navigationBarHidden(true)
+            .keepScreenOn()
         }
         .toast(isPresenting: $showSavedAlert, duration: 1.0){
             AlertToast(type: .systemImage("checkmark.circle", .green), title: "Trip saved")

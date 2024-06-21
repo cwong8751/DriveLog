@@ -110,7 +110,7 @@ struct TripView: View {
                 .padding()
                 .background(colorScheme == .dark ? Color.black : Color.white)
                 .opacity(0.8)
-                .cornerRadius(5)
+                .cornerRadius(10)
             }
             .frame(maxWidth: .infinity, alignment: .bottom)
             .edgesIgnoringSafeArea(.all)
@@ -124,6 +124,7 @@ struct TripView: View {
             
             // call set distance function
             setDistance()
+            setAvgSpeed()
         }
         .toast(isPresenting: $showErrorAlert) {
             AlertToast(displayMode: .alert, type: .error(Color.red), title: "Trip details failed to load")
@@ -161,7 +162,7 @@ struct TripView: View {
                 // Parse JSON into array of dictionaries
                 let tripData = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [[String: Any]]
                 
-                print(tripData)
+                //print(tripData)
                 
                 // Extract coordinates and speeds
                 coordinatesCL = [] // Clear array first
@@ -169,17 +170,24 @@ struct TripView: View {
                 
                 //TODO: test if this actually works, generate a file with speed
                 for dataPoint in tripData ?? [] {
-                    if let latitude = dataPoint["latitude"] as? String,
-                       let longitude = dataPoint["longitude"] as? String,
-                       let speed = dataPoint["speed"] as? CLLocationSpeed {
+                    print("entering deciphering loop")
+                    
+                    if let latitude = dataPoint["latitude"] as? Double,
+                       let longitude = dataPoint["longitude"] as? Double,
+                       let speed = dataPoint["speed"] as? Double {
                         
-                        let coordinate = CLLocationCoordinate2D(latitude: Double(latitude)!, longitude: Double(longitude)!)
+                        let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                        
+                        print("Latitude: \(latitude), Longitude: \(longitude), Speed: \(speed)")
                         
                         // append to array
                         coordinatesCL.append(coordinate)
                         speedsCL.append(speed)
                     }
                 }
+                
+                print(coordinatesCL)
+                print(coordinatesCL.count)
                 
                 // Set coordinate region
                 if let firstCoordinate = coordinatesCL.first {
@@ -230,11 +238,33 @@ struct TripView: View {
             return
         }
         
+        for i in 0..<speedsCL.count - 1 {
+            total += speedsCL[i]
+        }
+        
+        // calculate avg
+        total /= Double(speedsCL.count)
+        
+        // check for units
+        if(speedUnit == "mph"){
+            total *= 2.23694
+        }
+        else{
+            total *= 3.6
+        }
+        
+        // round
+        total = round(total * 100) / 100
+        
+        avgSpeed = String(total)
     }
     
     // function to get distance
     func setDistance(){
         var total = 0.0;
+        
+        print(coordinatesCL)
+        print(coordinatesCL.count)
         
         // check if is zero
         if(coordinatesCL.count <= 0){
