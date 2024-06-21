@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>DriveLog.ipa</key>
+	<array>
+		<dict>
+			<key>architectures</key>
+			<array>
+				<string>arm64</string>
+			</array>
+			<key>buildNumber</key>
+			<string>1</string>
+			<key>certificate</key>
+			<dict>
+				<key>SHA1</key>
+				<string>F77B150B1974BEB4BA6AF24BD6D351C76DD56A24</string>
+				<key>dateExpires</key>
+				<string>2025/6/21</string>
+				<key>type</key>
+				<string>Cloud Managed Apple Distribution</string>
+			</dict>
+			<key>entitlements</key>
+			<dict>
+				<key>application-identifier</key>
+				<string>D3U2YKYBAK.wqis.xyz.DriveLog</string>
+				<key>com.apple.developer.team-identifier</key>
+				<string>D3U2YKYBAK</string>
+				<key>get-task-allow</key>
+				<false/>
+			</dict>
+			<key>name</key>
+			<string>DriveLog.app</string>
+			<key>profile</key>
+			<dict>
+				<key>UUID</key>
+				<string>286f8bef-5990-41d8-a49c-b6bee9506792</string>
+				<key>dateExpires</key>
+				<string>2025/6/21</string>
+				<key>name</key>
+				<string>iOS Team Ad Hoc Provisioning Profile: wqis.xyz.DriveLog</string>
+			</dict>
+			<key>team</key>
+			<dict>
+				<key>id</key>
+				<string>D3U2YKYBAK</string>
+				<key>name</key>
+				<string>Yaodong Wang</string>
+			</dict>
+			<key>versionNumber</key>
+			<string>1.1</string>
+		</dict>
+	</array>
+</dict>
+</plist>
