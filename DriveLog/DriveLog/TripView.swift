@@ -21,6 +21,7 @@ struct TripView: View {
     // define variables for speed and distance calculation
     @State private var avgSpeed : String = "--"
     @State private var distance : String = "--"
+    @State private var topSpeed : String = "--"
     
     // trip name
     var trip : String
@@ -39,7 +40,7 @@ struct TripView: View {
         ZStack{
             // display map view for trip
             if let tripRegion = tripRegion, !coordinatesCL.isEmpty {
-                MapView(region: tripRegion, lineCoordinates: coordinatesCL)
+                MapView(region: tripRegion, lineCoordinates: coordinatesCL, startCoordinate: coordinatesCL[0], endCoordinate: coordinatesCL[coordinatesCL.count - 1])
                     .edgesIgnoringSafeArea(.bottom)
             }
             
@@ -49,6 +50,12 @@ struct TripView: View {
                 VStack{
                     // title text
                     HStack{
+                        Spacer()
+                        
+                        Text("Top Speed")
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity)
+                        
                         Spacer()
                         
                         Text("Avg Speed")
@@ -67,6 +74,12 @@ struct TripView: View {
                     // actual values
                     HStack{
                         Spacer()
+                        
+                        Text("22")
+                            .bold()
+                            .font(.system(size: 32))
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
                         
                         Text(avgSpeed)
                             .bold()
@@ -87,6 +100,14 @@ struct TripView: View {
                     
                     // units
                     HStack{
+                        Spacer()
+                        
+                        Text(speedUnit)
+                            .italic()
+                            .textCase(.uppercase)
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity)
+                        
                         Spacer()
                         
                         Text(speedUnit)
@@ -125,10 +146,26 @@ struct TripView: View {
             // call set distance function
             setDistance()
             setAvgSpeed()
+            setTopSpeed()
+            
         }
         .toast(isPresenting: $showErrorAlert) {
             AlertToast(displayMode: .alert, type: .error(Color.red), title: "Trip details failed to load")
         }
+    }
+    
+    func setTopSpeed() {
+        guard let maxSpeed = speedsCL.max() else {
+            return
+        }
+        
+        guard let maxIndex = speedsCL.firstIndex(of: maxSpeed) else {
+            return
+        }
+        
+        //let maxCoordinates = coordinatesCL[maxIndex]
+        
+        topSpeed = String(maxSpeed)
     }
     
     func loadTrip() {
@@ -168,9 +205,8 @@ struct TripView: View {
                 coordinatesCL = [] // Clear array first
                 speedsCL = []
                 
-                //TODO: test if this actually works, generate a file with speed
                 for dataPoint in tripData ?? [] {
-                    print("entering deciphering loop")
+                    //print("entering deciphering loop")
                     
                     if let latitude = dataPoint["latitude"] as? Double,
                        let longitude = dataPoint["longitude"] as? Double,
@@ -178,7 +214,7 @@ struct TripView: View {
                         
                         let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
                         
-                        print("Latitude: \(latitude), Longitude: \(longitude), Speed: \(speed)")
+                        //print("Latitude: \(latitude), Longitude: \(longitude), Speed: \(speed)")
                         
                         // append to array
                         coordinatesCL.append(coordinate)
@@ -186,8 +222,8 @@ struct TripView: View {
                     }
                 }
                 
-                print(coordinatesCL)
-                print(coordinatesCL.count)
+                //print(coordinatesCL)
+                //print(coordinatesCL.count)
                 
                 // Set coordinate region
                 if let firstCoordinate = coordinatesCL.first {
