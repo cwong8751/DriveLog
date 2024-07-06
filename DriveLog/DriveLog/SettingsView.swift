@@ -8,28 +8,37 @@
 import SwiftUI
 
 struct SettingsView: View {
-    var speedUnits = ["mph", "kph"]
-    var distUnits = ["miles", "kilometers"]
+    var units = ["imperial", "metric"]
     
     // use user default for persistent app storage
     @AppStorage("selectedSpeed") var selectedSpeed = "mph"
     @AppStorage("selectedDist") var selectedDist = "miles"
+    @AppStorage("unit") var selectedUnit = "imperial"
 
     
     var body: some View {
         Form{
             List{
                 Section(header: Text("Units")){
-                    // speed and distance selections
-                    Picker("Speed unit", selection: $selectedSpeed){
-                        ForEach(speedUnits, id: \.self){
+                    Picker("Units", selection: $selectedUnit) {
+                        ForEach(units, id: \.self){
                             Text($0)
                         }
                     }
-                    
-                    Picker("Distance unit", selection: $selectedDist){
-                        ForEach(distUnits, id: \.self){
-                            Text($0)
+                    .onChange(of: selectedUnit) { newValue in
+                        switch newValue{
+                        case "imperial":
+                            selectedSpeed = "mph"
+                            selectedDist = "miles"
+                            break;
+                        case "metric":
+                            selectedSpeed = "kph"
+                            selectedDist = "kilometers"
+                            break;
+                        default:
+                            selectedSpeed = "mph"
+                            selectedDist = "miles"
+                            break;
                         }
                     }
                 }
@@ -39,6 +48,10 @@ struct SettingsView: View {
                         Text(appVersion)
                     }
                 }
+                
+//                Section(header: Text("Sync")){
+//                    
+//                }
             }
         }
     }

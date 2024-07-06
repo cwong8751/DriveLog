@@ -30,11 +30,13 @@ struct ContentView: View {
                 .edgesIgnoringSafeArea(.all)
                 
                 VStack{
+                    // top menu bar
                     HStack{
                         Spacer()
                         Text("DriveLog")
                             .font(.title)
-                            .foregroundColor(.gray)
+                            .foregroundColor(.black)
+                            .padding()
                         Spacer()
                     }
                     .padding(.top, 50)
@@ -45,50 +47,63 @@ struct ContentView: View {
                     
                     Spacer()
                     
+                    // show logging details
                     if isLogging {
                         VStack{
                             HStack{
+                                // current distance
                                 Text(String(curDistance))
                                     .multilineTextAlignment(.center)
                                     .frame(maxWidth: .infinity)
+                                    .lineLimit(1)
                                 
                                 Spacer()
                                 
+                                // current speed
                                 Text(String(curSpeed))
                                     .multilineTextAlignment(.center)
                                     .font(.title)
                                     .frame(maxWidth: .infinity)
+                                    .lineLimit(1)
                                 
                                 Spacer()
                                 
+                                // time
                                 Text("--")
                                     .multilineTextAlignment(.center)
                                     .frame(maxWidth: .infinity)
+                                    .lineLimit(1)
                             }
                             .padding()
                             
                             HStack{
+                                // distance unit text
                                 Text(distanceUnit)
                                     .italic()
                                     .textCase(.uppercase)
                                     .multilineTextAlignment(.center)
                                     .frame(maxWidth: .infinity)
+                                    .lineLimit(1)
                                 
                                 Spacer()
                                 
+                                // speed unit text
                                 Text(speedUnit)
                                     .italic()
                                     .textCase(.uppercase)
                                     .multilineTextAlignment(.center)
                                     .frame(maxWidth: .infinity)
+                                    .lineLimit(1)
                                 
                                 Spacer()
                                 
-                                Text("Time")
+                                // trip time unit text
+                                Text("TRIP")
                                     .italic()
                                     .textCase(.uppercase)
                                     .multilineTextAlignment(.center)
                                     .frame(maxWidth: .infinity)
+                                    .lineLimit(1)
                             }
                             .padding()
                         }
@@ -99,8 +114,8 @@ struct ContentView: View {
                         .padding()
                     }
                     
+                    // bottom controls bar
                     HStack {
-                        
                         Spacer()
                         
                         // settings button

@@ -11,6 +11,8 @@
 		C31698362B544E6A00F97F57 /* ListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C31698352B544E6A00F97F57 /* ListView.swift */; };
 		C34A1BC82BCC662D00111339 /* TripView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34A1BC72BCC662D00111339 /* TripView.swift */; };
 		C34A1BCB2BCC689E00111339 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34A1BCA2BCC689E00111339 /* LocationManager.swift */; };
+		C360C7EE2C34FACA00AE703F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C360C7ED2C34FACA00AE703F /* GoogleService-Info.plist */; };
+		C39080A12C39990A00BE9C1F /* SwiftUIX in Frameworks */ = {isa = PBXBuildFile; productRef = C39080A02C39990A00BE9C1F /* SwiftUIX */; };
 		C3AB37CC2B0BE12800F1E34C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3AB37CB2B0BE12800F1E34C /* SettingsView.swift */; };
 		C3AED1672B0408820097A428 /* DriveLogApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3AED1662B0408820097A428 /* DriveLogApp.swift */; };
 		C3AED1692B0408820097A428 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3AED1682B0408820097A428 /* ContentView.swift */; };
@@ -26,6 +28,7 @@
 		C31698352B544E6A00F97F57 /* ListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListView.swift; sourceTree = "<group>"; };
 		C34A1BC72BCC662D00111339 /* TripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripView.swift; sourceTree = "<group>"; };
 		C34A1BCA2BCC689E00111339 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		C360C7ED2C34FACA00AE703F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C3AB37CB2B0BE12800F1E34C /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C3AED1632B0408820097A428 /* DriveLog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DriveLog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3AED1662B0408820097A428 /* DriveLogApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriveLogApp.swift; sourceTree = "<group>"; };
@@ -43,6 +46,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C3FB18D82C23DB3400F56309 /* AlertToast in Frameworks */,
+				C39080A12C39990A00BE9C1F /* SwiftUIX in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +82,7 @@
 		C3AED1652B0408820097A428 /* DriveLog */ = {
 			isa = PBXGroup;
 			children = (
+				C360C7ED2C34FACA00AE703F /* GoogleService-Info.plist */,
 				C34A1BC92BCC689000111339 /* Location */,
 				C31698352B544E6A00F97F57 /* ListView.swift */,
 				C3AED1662B0408820097A428 /* DriveLogApp.swift */,
@@ -118,6 +123,7 @@
 			name = DriveLog;
 			packageProductDependencies = (
 				C3FB18D72C23DB3400F56309 /* AlertToast */,
+				C39080A02C39990A00BE9C1F /* SwiftUIX */,
 			);
 			productName = DriveLog;
 			productReference = C3AED1632B0408820097A428 /* DriveLog.app */;
@@ -148,6 +154,7 @@
 			mainGroup = C3AED15A2B0408810097A428;
 			packageReferences = (
 				C3FB18D62C23DB3400F56309 /* XCRemoteSwiftPackageReference "AlertToast" */,
+				C390809F2C39990A00BE9C1F /* XCRemoteSwiftPackageReference "SwiftUIX" */,
 			);
 			productRefGroup = C3AED1642B0408820097A428 /* Products */;
 			projectDirPath = "";
@@ -165,6 +172,7 @@
 			files = (
 				C3AED16E2B04088A0097A428 /* Preview Assets.xcassets in Resources */,
 				C3AED16B2B04088A0097A428 /* Assets.xcassets in Resources */,
+				C360C7EE2C34FACA00AE703F /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -388,6 +396,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		C390809F2C39990A00BE9C1F /* XCRemoteSwiftPackageReference "SwiftUIX" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftUIX/SwiftUIX";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.1;
+			};
+		};
 		C3FB18D62C23DB3400F56309 /* XCRemoteSwiftPackageReference "AlertToast" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/elai950/AlertToast.git";
@@ -399,6 +415,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		C39080A02C39990A00BE9C1F /* SwiftUIX */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C390809F2C39990A00BE9C1F /* XCRemoteSwiftPackageReference "SwiftUIX" */;
+			productName = SwiftUIX;
+		};
 		C3FB18D72C23DB3400F56309 /* AlertToast */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C3FB18D62C23DB3400F56309 /* XCRemoteSwiftPackageReference "AlertToast" */;

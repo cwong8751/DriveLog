@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftUIX
 
 struct ListView: View {
     // state variables
@@ -7,6 +8,7 @@ struct ListView: View {
     @State private var filteredTrips: [String] = [] // stores the filtered trips
     @State private var sortOrder: SortOrder = .newest // sorting function for list
     @State private var searchText: String = "" // list search
+    @State var isEditing: Bool = false
 
     enum SortOrder {
         case newest
@@ -21,44 +23,45 @@ struct ListView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .multilineTextAlignment(.center)
                 Spacer()
-            }
-
-            if !showEmptyText {
-                // add search bar
-                TextField("Search", text: $searchText)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding(.horizontal)
-                    .onChange(of: searchText) { _ in
+            } else {
+                SearchBar("Search", text: $searchText, isEditing: $isEditing)
+                    .showsCancelButton(isEditing)
+                    .onCancel {
+                        searchText = ""
                         filterTrips()
                     }
-            }
+                    .padding(.horizontal)
 
-            // top list menu bar
-            List {
-                ForEach(filteredTrips, id: \.self) { timestamp in
-                    // wrap with navigation link to make each item clickable
-                    NavigationLink(destination: TripView(trip: timestamp)) {
-                        Text("Trip on " + timestamp)
-                    }
-                }
-                // display the list history from the formatLogs function
-                .onDelete(perform: delete)
-            }
-            .toolbar {
-                ToolbarItem() {
-                    Menu {
-                        Button(action: { sortOrder = .newest }) {
-                            Label("Newest on top", systemImage: sortOrder == .newest ? "checkmark" : "")
+                List {
+                    ForEach(filteredTrips.filter {
+                        searchText.isEmpty ? true : $0.localizedCaseInsensitiveContains(searchText)
+                    }, id: \.self) { item in
+                        // wrap with navigation link to make each item clickable
+                        NavigationLink(destination: TripView(trip: item)) {
+                            Text("Trip on " + item)
                         }
-                        Button(action: { sortOrder = .oldest }) {
-                            Label("Oldest on top", systemImage: sortOrder == .oldest ? "checkmark" : "")
-                        }
-                    } label: {
-                        Text("Sort")
                     }
+                    .onDelete(perform: delete)
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
+                .toolbar {
+                    // sort button
+                    ToolbarItem {
+                        Menu {
+                            Button(action: { sortOrder = .newest }) {
+                                Label("Newest on top", systemImage: sortOrder == .newest ? "checkmark" : "")
+                            }
+                            Button(action: { sortOrder = .oldest }) {
+                                Label("Oldest on top", systemImage: sortOrder == .oldest ? "checkmark" : "")
+                            }
+                        } label: {
+                            Text("Sort")
+                        }
+                    }
+
+                    // edit button
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        EditButton()
+                    }
                 }
             }
         }
@@ -88,13 +91,13 @@ struct ListView: View {
             // get all files in the directory
             do {
                 let pathList = try FileManager.default.contentsOfDirectory(at: documentDirectory, includingPropertiesForKeys: nil, options: [])
-                
+
                 // filter list, first four char in file name is trip and extension is json
                 let filterList = pathList.filter { url in
                     let fileName = url.lastPathComponent
                     return fileName.hasPrefix("trip") && url.pathExtension.lowercased() == "json"
                 }
-                
+
                 return filterList
             } catch {
                 print("Error: \(error)")
