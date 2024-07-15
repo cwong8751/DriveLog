@@ -17,6 +17,7 @@ struct ListView: View {
 
     var body: some View {
         VStack {
+            // empty list placeholder
             if showEmptyText {
                 Spacer()
                 Text("You have no trips so far")
@@ -24,6 +25,7 @@ struct ListView: View {
                     .multilineTextAlignment(.center)
                 Spacer()
             } else {
+                // search bar
                 SearchBar("Search", text: $searchText, isEditing: $isEditing)
                     .showsCancelButton(isEditing)
                     .onCancel {
@@ -32,6 +34,7 @@ struct ListView: View {
                     }
                     .padding(.horizontal)
 
+                // list of trips
                 List {
                     ForEach(filteredTrips.filter {
                         searchText.isEmpty ? true : $0.localizedCaseInsensitiveContains(searchText)
@@ -48,10 +51,10 @@ struct ListView: View {
                     ToolbarItem {
                         Menu {
                             Button(action: { sortOrder = .newest }) {
-                                Label("Newest on top", systemImage: sortOrder == .newest ? "checkmark" : "")
+                                Text("Newest on top")
                             }
                             Button(action: { sortOrder = .oldest }) {
-                                Label("Oldest on top", systemImage: sortOrder == .oldest ? "checkmark" : "")
+                                Text("Oldest on top")
                             }
                         } label: {
                             Text("Sort")

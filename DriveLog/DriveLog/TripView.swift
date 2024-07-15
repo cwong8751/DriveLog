@@ -10,7 +10,6 @@ import MapKit
 import Foundation
 import AlertToast
 
-//TODO: either use mapview for both contentview and tripview or use Map()
 struct TripView: View {
     // define variables
     @State private var coordinatesCL : [CLLocationCoordinate2D] = []
@@ -64,7 +63,7 @@ struct TripView: View {
                         
                         Spacer()
                         
-                        Text("Total Distance")
+                        Text("Distance")
                             .multilineTextAlignment(.center)
                             .frame(maxWidth: .infinity)
                         
@@ -75,7 +74,7 @@ struct TripView: View {
                     HStack{
                         Spacer()
                         
-                        Text("22")
+                        Text(topSpeed)
                             .bold()
                             .font(.system(size: 32))
                             .multilineTextAlignment(.center)
@@ -159,18 +158,11 @@ struct TripView: View {
             return
         }
         
-        guard let maxIndex = speedsCL.firstIndex(of: maxSpeed) else {
-            return
-        }
-        
-        //let maxCoordinates = coordinatesCL[maxIndex]
-        
-        topSpeed = String(maxSpeed)
+        topSpeed = String(Int(maxSpeed)) // convert to int then string
     }
     
     func loadTrip() {
-        print(trip)
-        
+        //print(trip)
         // Extract date and time from human-readable index
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
@@ -226,14 +218,17 @@ struct TripView: View {
                 //print(coordinatesCL.count)
                 
                 // Set coordinate region
-                if let firstCoordinate = coordinatesCL.first {
-                    tripRegion = MKCoordinateRegion(
-                        center: firstCoordinate,
-                        span: MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
-                    )
+                DispatchQueue.main.async{
+                    if let firstCoordinate = coordinatesCL.first {
+                        tripRegion = MKCoordinateRegion(
+                            center: firstCoordinate,
+                            span: MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
+                        )
+                    }
+                    
+                    tripLine = MKPolyline(coordinates: coordinatesCL, count: coordinatesCL.count)
                 }
                 
-                tripLine = MKPolyline(coordinates: coordinatesCL, count: coordinatesCL.count)
             } catch {
                 print("Error while decoding JSON \(error)")
                 return
@@ -241,8 +236,9 @@ struct TripView: View {
         } else {
             print("Error occurred while converting human-readable index to file name for deletion")
         }
+        
     }
-
+    
     
     // function to read file
     func getFileContents(fileName: String) -> String? {
@@ -289,10 +285,7 @@ struct TripView: View {
             total *= 3.6
         }
         
-        // round
-        total = round(total * 100) / 100
-        
-        avgSpeed = String(total)
+        avgSpeed = String(Int(total)) // round to int
     }
     
     // function to get distance
@@ -321,11 +314,11 @@ struct TripView: View {
         }
         
         // round to two decimal places
-        total = round(total * 100) / 100
+        //        total = round(total * 100) / 100
         
         // set state variable
         // the calculated distance is in kilometers
-        distance = String(total);
+        distance = String(Int(total));
     }
     
     func distanceBetweenTwoPts(pt1 : CLLocationCoordinate2D, pt2 : CLLocationCoordinate2D) -> Double{

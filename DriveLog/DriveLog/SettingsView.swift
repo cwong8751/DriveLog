@@ -32,8 +32,8 @@ struct SettingsView: View {
                             selectedDist = "miles"
                             break;
                         case "metric":
-                            selectedSpeed = "kph"
-                            selectedDist = "kilometers"
+                            selectedSpeed = "km/h"
+                            selectedDist = "km"
                             break;
                         default:
                             selectedSpeed = "mph"
@@ -47,6 +47,10 @@ struct SettingsView: View {
                     Section(header: Text("Version")){
                         Text(appVersion)
                     }
+                }
+                
+                Section(header: Text("Map")){
+                    Text("Coming soon")
                 }
                 
 //                Section(header: Text("Sync")){

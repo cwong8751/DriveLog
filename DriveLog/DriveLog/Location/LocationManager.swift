@@ -31,7 +31,7 @@ final class LocationManager: NSObject, ObservableObject {
     func setup() {
         switch locationManager.authorizationStatus {
         //If we are authorized then we request location just once, to center the map
-        case .authorizedWhenInUse:
+        case .authorizedWhenInUse, .authorizedAlways:
             locationManager.requestLocation()
         //If we don´t, we request authorization
         case .notDetermined:
@@ -44,23 +44,49 @@ final class LocationManager: NSObject, ObservableObject {
 }
 
 extension LocationManager: CLLocationManagerDelegate {
+//    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+//        guard .authorizedWhenInUse == manager.authorizationStatus else { return }
+//        locationManager.startUpdatingLocation()
+//        //locationManager.requestLocation()
+//    }
+    
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        guard .authorizedWhenInUse == manager.authorizationStatus else { return }
-        locationManager.startUpdatingLocation()
-    }
+            guard manager.authorizationStatus == .authorizedWhenInUse || manager.authorizationStatus == .authorizedAlways else { return }
+            locationManager.startUpdatingLocation()
+        }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("Something went wrong: \(error)")
     }
     
+//    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+//        
+//        // stops the map from recentering itself
+//        //locationManager.stopUpdatingLocation()
+//        
+//        
+//        DispatchQueue.main.async{
+//            locations.last.map {
+//                self.userCoordinates = $0.coordinate // update coordinates to published variable
+//                self.userSpeed = $0.speed // update speed
+//                self.region = MKCoordinateRegion(
+//                    center: $0.coordinate,
+//                    span: .init(latitudeDelta: 0.01, longitudeDelta: 0.01)
+//                )
+//            }
+//        }
+//    }
+    
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        locations.last.map {
-            userCoordinates = $0.coordinate // update coordinates to published variable
-            userSpeed = $0.speed // update speed
-            region = MKCoordinateRegion(
-                center: $0.coordinate,
-                span: .init(latitudeDelta: 0.01, longitudeDelta: 0.01)
-            )
-        }
-    }
+         guard let location = locations.last else { return }
+         
+         DispatchQueue.main.async {
+             self.userCoordinates = location.coordinate
+             self.userSpeed = location.speed
+             self.region = MKCoordinateRegion(
+                 center: location.coordinate,
+                 span: .init(latitudeDelta: 0.01, longitudeDelta: 0.01)
+             )
+         }
+     }
 }

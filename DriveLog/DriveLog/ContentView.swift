@@ -60,7 +60,7 @@ struct ContentView: View {
                                 Spacer()
                                 
                                 // current speed
-                                Text(String(curSpeed))
+                                Text(String(Int(curSpeed)))
                                     .multilineTextAlignment(.center)
                                     .font(.title)
                                     .frame(maxWidth: .infinity)
@@ -230,19 +230,21 @@ struct ContentView: View {
                 if let speed = locationManager.userSpeed {
                     speeds.append(speed)
                     
-                    // set user current speed
-                    curSpeed = speed
-                    
-                    // speed convert
-                    if(speedUnit == "mph"){
-                        curSpeed *= 2.23694
+                    DispatchQueue.main.async{
+                        // set user current speed
+                        curSpeed = speed
+                        
+                        // speed convert
+                        if(speedUnit == "mph"){
+                            curSpeed *= 2.23694
+                        }
+                        else if(speedUnit == "kph"){
+                            curSpeed *= 3.6
+                        }
+                        
+                        // round speed
+                        curSpeed = (curSpeed * 10).rounded() / 10
                     }
-                    else if(speedUnit == "kph"){
-                        curSpeed *= 3.6
-                    }
-                    
-                    // round speed
-                    curSpeed = (curSpeed * 10).rounded() / 10
                     
                     //TODO: update live user time
                 }
@@ -252,19 +254,21 @@ struct ContentView: View {
                     coordinates.append(coord)
                     //print("User Coordinates: \(coord.latitude), \(coord.longitude)")
                     
-                    // set user current distance
-                    curDistance = calculateTotalDistance(coordinates: coordinates)
-                    
-                    // distance convert
-                    if(distanceUnit == "kilometers"){
-                        curDistance /= 1000
+                    DispatchQueue.main.async{
+                        // set user current distance
+                        curDistance = calculateTotalDistance(coordinates: coordinates)
+                        
+                        // distance convert
+                        if(distanceUnit == "kilometers"){
+                            curDistance /= 1000
+                        }
+                        else if(distanceUnit == "miles"){
+                            curDistance *= 0.000621371
+                        }
+                        
+                        // round distance
+                        curDistance = (curDistance * 100).rounded() / 100
                     }
-                    else if(distanceUnit == "miles"){
-                        curDistance *= 0.000621371
-                    }
-                    
-                    // round distance
-                    curDistance = (curDistance * 100).rounded() / 100
                 }
                 
                 sleep(3) // for test
@@ -291,7 +295,6 @@ struct ContentView: View {
                 return
             }
             
-            //TODO: test if this actually works
             // map data coordinate2d
             let coordinateMap = zip(coordinates, speeds).map { (coordinate, speed) -> [String: Any] in
                 return [
