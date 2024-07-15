@@ -69,10 +69,10 @@ struct ContentView: View {
                                 Spacer()
                                 
                                 // time
-                                Text("--")
-                                    .multilineTextAlignment(.center)
-                                    .frame(maxWidth: .infinity)
-                                    .lineLimit(1)
+//                                Text("--")
+//                                    .multilineTextAlignment(.center)
+//                                    .frame(maxWidth: .infinity)
+//                                    .lineLimit(1)
                             }
                             .padding()
                             
@@ -98,12 +98,12 @@ struct ContentView: View {
                                 Spacer()
                                 
                                 // trip time unit text
-                                Text("TRIP")
-                                    .italic()
-                                    .textCase(.uppercase)
-                                    .multilineTextAlignment(.center)
-                                    .frame(maxWidth: .infinity)
-                                    .lineLimit(1)
+//                                Text("TRIP")
+//                                    .italic()
+//                                    .textCase(.uppercase)
+//                                    .multilineTextAlignment(.center)
+//                                    .frame(maxWidth: .infinity)
+//                                    .lineLimit(1)
                             }
                             .padding()
                         }
