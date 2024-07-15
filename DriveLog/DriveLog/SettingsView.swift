@@ -9,11 +9,13 @@ import SwiftUI
 
 struct SettingsView: View {
     var units = ["imperial", "metric"]
+    var mapStyles = ["default", "hybrid", "satellite"]
     
     // use user default for persistent app storage
     @AppStorage("selectedSpeed") var selectedSpeed = "mph"
     @AppStorage("selectedDist") var selectedDist = "miles"
     @AppStorage("unit") var selectedUnit = "imperial"
+    @AppStorage("mapStyle") var selectedMapStyle = "default"
 
     
     var body: some View {
@@ -43,19 +45,22 @@ struct SettingsView: View {
                     }
                 }
                 
+                Section(header: Text("Map")){
+                    Picker("Map Style", selection: $selectedMapStyle) {
+                        ForEach(mapStyles, id: \.self){
+                            Text($0)
+                        }
+                    }
+//                    .onChange(of: selectedMapStyle) { newValue in
+//                        print("new map style: " + selectedMapStyle)
+//                    }
+                }
+                
                 if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
                     Section(header: Text("Version")){
                         Text(appVersion)
                     }
                 }
-                
-                Section(header: Text("Map")){
-                    Text("Coming soon")
-                }
-                
-//                Section(header: Text("Sync")){
-//                    
-//                }
             }
         }
     }

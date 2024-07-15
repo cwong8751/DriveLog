@@ -21,13 +21,24 @@ struct ContentView: View {
     // speed and distance unit app storage vars
     @AppStorage("selectedSpeed") var speedUnit = "mph"
     @AppStorage("selectedDist") var distanceUnit = "miles"
+    @AppStorage("mapStyle") var mapStyle = "default"
     
     var body: some View {
         NavigationView{
             ZStack {
-                Map(coordinateRegion: $locationManager.region, interactionModes: .all
-                    , showsUserLocation: true)
-                .edgesIgnoringSafeArea(.all)
+                if #available(iOS 17.0, *) {
+                    Map(coordinateRegion: $locationManager.region, interactionModes: .all
+                        , showsUserLocation: true)
+                    .mapStyle(getMapStyle(style: mapStyle))
+                    .edgesIgnoringSafeArea(.all)
+                    .onChange(of: mapStyle) {newStyle in
+                        locationManager.region = locationManager.region
+                    }
+                } else {
+                    Map(coordinateRegion: $locationManager.region, interactionModes: .all
+                        , showsUserLocation: true)
+                    .edgesIgnoringSafeArea(.all)
+                }
                 
                 VStack{
                     // top menu bar
@@ -210,6 +221,26 @@ struct ContentView: View {
             AlertToast(type: .loading, title: "Saving trip...")
         }
     }
+    
+    // function to convert string mapstyle to mapstyle property
+    @available(iOS 17.0, *)
+    func getMapStyle(style: String) -> MapStyle{
+        switch(style){
+        case "default":
+            return MapStyle.standard
+            break;
+        case "hybrid":
+            return MapStyle.hybrid
+            break;
+        case "satellite":
+            return MapStyle.imagery
+            break;
+        default:
+            return MapStyle.standard
+            break;
+        }
+    }
+    
     
     // function to log path of user
     // default distance is m, speed is m/s
