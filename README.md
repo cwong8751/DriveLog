@@ -1,3 +1,6 @@
+<img src="DriveLog/DriveLog/Assets.xcassets/AppIcon.appiconset/1024.png" width="200">
+
+
 # DriveLog
 A simple trip tracker for cars and motorcycles. 
 
